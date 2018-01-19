@@ -5,17 +5,57 @@ from django.utils.translation import ugettext_lazy as _
 from cruds_adminlte.crud import CRUDView
 from cruds_adminlte.inline_crud import InlineAjaxCRUD
 
-from .models import Autor, Addresses, Line, Invoice
-from .forms import InvoiceForm, LineForm, AddressesForm
+from .models import Autor, Addresses, Line, Invoice, Customer
+
 from django.views.generic.base import TemplateView
 from django import forms
 from cruds_adminlte.filter import FormFilter
+
+from .forms import CustomerForm, InvoiceForm, LineForm, AddressesForm
 
 
 class IndexView(TemplateView):
     template_name = 'index.html'
 
+class CustomerCRUD(CRUDView):
+    model = Customer
+    namespace = 'testapp'
+    check_login = False
+    check_perms = False
+    views_available=['create', 'list', 'delete', 'update', 'detail']
+    fields = ['name','email']
+    
+    custom_forms = {
+        'add_customer': CustomerForm,
+        'update_customer': CustomerForm,
+        'add_invoice': InvoiceForm,
+        'update_invoice': InvoiceForm,
+        'add_line': LineForm,
+        'update_line': LineForm,
+        'add_addresses': AddressesForm,
+        'update_addresses': AddressesForm,
+    }
+    modelforms= custom_forms
+    cruds_url='lte'
+    
+class LineCRUD(CRUDView):
+    model = Line
+    namespace = 'testapp' 
+    check_login = False
+    check_perms = False 
+    fields = '__all__'
+    cruds_url= 'lte'
+    views_available=['create', 'list', 'delete', 'update', 'detail']   
 
+class AddressCRUD(CRUDView):
+    model = Addresses
+    namespace = 'testapp' 
+    check_login = False
+    check_perms = False 
+    fields = '__all__'
+    cruds_url= 'lte'
+    views_available=['create', 'list', 'delete', 'update', 'detail'] 
+    
 class Address_AjaxCRUD(InlineAjaxCRUD):
     model = Addresses
     base_model = Autor

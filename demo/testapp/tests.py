@@ -1,17 +1,45 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.test import TestCase
-
+from django.urls import reverse
 from django.contrib.auth.models import User, Permission, Group
+
+#TEST
+from django.test import TestCase, RequestFactory
 from django.test import Client
 
-from django.urls import reverse
+#CRUD
+from cruds_adminlte.utils import get_fields
+from cruds_adminlte import crud as crud_views
 
- 
-# Create your tests here.
+#APPs
+from .models import Autor
 
 
+class CRUDViewTest(TestCase):
+
+    def setUp(self):
+        self.factory = RequestFactory()
+
+    def test_add_crud_template(self):
+        request = self.factory.get('')
+        view = crud_views.CRUDView.as_view(model=Author)(request)
+        self.assertEqual(view.template_name, [
+            u'testapp/author_list.html',
+            u'cruds/list.html',
+        ])
+
+
+class TestUtils(TestCase):
+
+    def test_get_fields_order(self):
+        res = get_fields(Autor, ('name',))
+        self.assertEqual(list(res.keys())[0], 'name')
+
+
+
+
+""" TEST OF VIEWS """
 class AuthUserViewTest(TestCase):
 
     def setUp(self):
@@ -26,7 +54,9 @@ class AuthUserViewTest(TestCase):
         self.user.set_password('test')
         self.user.save()
       
-    
+
+        
+        
     def test_user_noLogin(self):
         """ The User don't have been login """
         response = self.client.get(reverse('auth_user_list'))
@@ -65,7 +95,12 @@ class AdminViewTestCase(TestCase):
         )
         self.user.set_password('test')
         self.user.save()
-        self.client.login(username='test', password='test')        
+        self.client.login(username='test', password='test')
+        
+        
+    def tearDown(self):
+        self.client.logout()
+                    
     def test_user_can_access(self):
         """user in group should have access
         """
