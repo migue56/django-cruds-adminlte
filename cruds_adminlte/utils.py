@@ -82,4 +82,8 @@ def crud_url(instance, action, prefix=None, namespace=None,
 
 def get_related_class_field(obj, field):
     objfield = obj._meta.get_field(field)
-    return objfield.rel.model
+    try:
+           relation_model = objfield.rel.model
+    except AttributeError: #django 2.0
+          relation_model = objfield.remote_field.model
+    return relation_model
