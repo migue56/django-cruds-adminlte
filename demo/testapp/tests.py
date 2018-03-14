@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.urls import reverse
-from django.contrib.auth.models import  ( User,
+from django.contrib.auth.models import  (User,
                                           Permission,
-                                          Group )
+                                          Group)
 from django.utils import timezone
-from django.template import (Template, 
+from django.template import (Template,
                              Context)
 from django.db.models.query_utils import Q
 from django.urls.exceptions import NoReverseMatch
@@ -131,7 +131,7 @@ def get_request_form_values(self, use_id=True):
         form = response.context['form']  # get the form with data fields
         data = form.initial  # take array list of fields with values
         
-        if ('image' in data ): 
+        if ('image' in data): 
             data.pop('image')
         
         if 'id' in data and not use_id:  # to create a new object django require a pk/id = void
@@ -384,6 +384,7 @@ class FilterOListViewTest:
         self.client.logout()   
             
     """ Test action url with filters params valid, checking to add one by one """
+
     def test_get_listView_pagination_and_filters_valid(self):
         params = []
         self.client.login(username='test', password='test')
@@ -441,9 +442,12 @@ class FilterOListViewTest:
                                     self.assertContains(response, "%s" % html)   
                                     self.assertTemplateUsed(response, self.view.paginate_template)  # loaded the correct template          
         self.client.logout()  
+
+
 class SimpleOEditViewTest:
     update_set = None
     """ Test show list of 'object_list' """
+
     def test_get_editView_content(self):
         self.client.login(username='test', password='test')
         firstobject = self.view.model.objects.first()
@@ -496,6 +500,7 @@ class SimpleOEditViewTest:
         self.client.logout() 
         
     """ Test save changes on method post"""
+
     def  test_post_editview_valid(self):
         self.type = UPDATE
         self.client.login(username='test', password='test')    
@@ -529,7 +534,9 @@ class SimpleOEditViewTest:
                         formvalue = str(formvalue)       
                     self.assertTrue((newvalue  in formvalue) , "Value  %s not in %s, it did not have been changed to DB" % (newvalue, formvalue))
         self.client.logout()     
+
     """ Check display error to requerid fields """
+
     def  test_post_editview_invalid(self):
         self.type = UPDATE
         self.client.login(username='test', password='test')    
@@ -559,8 +566,10 @@ class SimpleOEditViewTest:
                         )
         self.client.logout() 
 
+
 class FilterOEditViewTest:   
     """ Test if editview use filters params"""
+
     def  test_editview_filters(self): 
         self.type = UPDATE
         params = []
@@ -590,8 +599,11 @@ class FilterOEditViewTest:
                 filter_html = '<form action="%s' % (urlparams)
                 self.assertContains(response, filter_html, 1, 200, "The form actions doesn't have been completed with the filters url")  # label filters exist
         self.client.logout() 
+
+
 class SimpleODeleteViewTest:
     """ check if comands post do the deleting  """
+
     def  test_deleteview_post_delete(self): 
         self.type = DELETE  # delete form update/edit view
         self.client.login(username='test', password='test')
@@ -607,7 +619,6 @@ class SimpleODeleteViewTest:
             # check if have been deleted and show error 404
             self.assertEqual(response.status_code, 404)  # the response do not sent to error of pk valid                
         self.client.logout()    
-        
     
     def  test_deleteview_get_delete(self):
         """ check if delete view have confirmation button """ 
@@ -627,8 +638,11 @@ class SimpleODeleteViewTest:
 
 
 """ Fathers class with auth user access """
+
+
 class AuthUserTest:    
     """ user  out log on list """          
+
     def  test_user_list_noLogin(self):
         self.type = LIST
         if (self.type in self.view.views_available):        
@@ -636,7 +650,9 @@ class AuthUserTest:
             response = self.client.get(url)
             self.assertEqual(response.status_code, 302)        
             self.assertEqual(response.url, "/accounts/login/?next=%s" % url);
+
     """ user  out log on edit """     
+
     def test_user_edit_noLogin(self):
         self.type = UPDATE
         if (self.type in self.view.views_available):
@@ -646,7 +662,9 @@ class AuthUserTest:
             response = self.client.get(url)            
             self.assertEqual(response.status_code, 302) 
             self.assertEqual(response.url, "/accounts/login/?next=%s" % url);        
+
     """ user  out log on create """    
+
     def test_user_create_noLogin(self):
         self.type = CREATE
         if (self.type in self.view.views_available):
@@ -654,7 +672,9 @@ class AuthUserTest:
             response = self.client.get(url)
             self.assertEqual(response.status_code, 302) 
             self.assertEqual(response.url, "/accounts/login/?next=%s" % url);       
+
     """ user  out log on delete """           
+
     def test_user_delete_noLogin(self):
         self.type = DELETE
         if (self.type in self.view.views_available):
@@ -664,7 +684,9 @@ class AuthUserTest:
             response = self.client.get(url)           
             self.assertEqual(response.status_code, 302)      
             self.assertEqual(response.url, "/accounts/login/?next=%s" % url);   
+
     """ user  logging on list """                    
+
     def  test_user_listview_Login(self):
         self.type = LIST
         if (self.type in self.view.views_available):
@@ -673,7 +695,9 @@ class AuthUserTest:
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)  
             self.client.logout()                   
+
     """ user  logging on edit """
+
     def test_user_editview_Login(self):
         self.type = UPDATE
         if (self.type in self.view.views_available):
@@ -684,7 +708,9 @@ class AuthUserTest:
             response = self.client.get(url)     
             self.assertEqual(response.status_code, 200)   
             self.client.logout()             
+
     """ user  logging on create """    
+
     def test_user_createview_Login(self):
         self.type = CREATE
         if (self.type in self.view.views_available):
@@ -693,7 +719,9 @@ class AuthUserTest:
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
             self.client.logout()              
+
     """ user  logging on delete """        
+
     def test_user_deleteview_Login(self):
         self.type = DELETE
         if (self.type in self.view.views_available):
@@ -704,7 +732,9 @@ class AuthUserTest:
             response = self.client.get(url)     
             self.assertEqual(response.status_code, 200)      
             self.client.logout()             
+
     """ Check redirect post update without log """
+
     def  test_post_update(self):
         self.type = UPDATE
         if (self.type in self.view.views_available):
@@ -722,6 +752,7 @@ class AuthUserTest:
                     ) 
 
     """ Check redirect post delete without log """
+
     def  test_post_delete(self):
         self.type = DELETE
         firstobject = self.view.model.objects.first()
@@ -735,7 +766,9 @@ class AuthUserTest:
                 target_status_code=200,
                 fetch_redirect_response=True
                 )                 
+
     """ Check redirect post create without log """
+
     def  test_post_create(self):
         self.type = CREATE
         if (self.type in self.view.views_available):
@@ -751,8 +784,13 @@ class AuthUserTest:
                 target_status_code=200,
                 fetch_redirect_response=True
                 )
+
+
 """ Profile user access on admin views """
+
+
 class AdminViewTestCase:
+
     def test_admin_password_change(self):
         """ user can use django admin to change password"""
         self.client.login(username='test', password='test')
@@ -767,33 +805,43 @@ class AdminViewTestCase:
         self.assertEqual(response.status_code, 302) 
         url_redirect = "/admin/login/?next=%s" % url
         self.assertEqual(response.url, url_redirect); 
+
+
 """ models/app classes   """   
 
+
 class AutorTest(TreeData, AuthUserTest, SimpleOListViewTest, FilterOListViewTest, SimpleOEditViewTest, SimpleODeleteViewTest):   
+
     def __init__(self, *args, **kwargs):
         self.model = 'autor'        
         self.model_inserting = 4
         self.ignore_action = []   
         self.view = AutorCRUD()  # defined view 
         super(AutorTest, self).__init__(*args, **kwargs)                        
+
  
 class AddressTest(TreeData, AuthUserTest, SimpleOListViewTest, FilterOListViewTest, SimpleOEditViewTest, SimpleODeleteViewTest):   
+
     def __init__(self, *args, **kwargs):
         self.model = 'addresses'        
         self.model_inserting = 4  # 4 = (4 addresses)
         self.ignore_action = []   
         self.view = AddressCRUD()  # defined view 
         super(AddressTest, self).__init__(*args, **kwargs)
+
  
 class LineTest(TreeData, AuthUserTest, SimpleOListViewTest, FilterOListViewTest, SimpleOEditViewTest, SimpleODeleteViewTest):   
+
     def __init__(self, *args, **kwargs):
         self.model = 'line' 
         self.model_inserting = (4 * 4 * 4)  # 64 = (4 custormers x 4 invoices x 4 line)
         self.ignore_action = [LIST]  # Used when action doesn't is shows. Example:: list action on sidebar
         self.view = LineCRUD()  # defined view
         super(LineTest, self).__init__(*args, **kwargs)
+
                                                                  
 class InvoiceTest(TreeData, AuthUserTest, SimpleOListViewTest, FilterOListViewTest, SimpleOEditViewTest, SimpleODeleteViewTest, FilterOEditViewTest):   
+
     def __init__(self, *args, **kwargs):
         self.model = 'invoice' 
         self.model_inserting = (4 * 4)  #  16 = (4 custormers x 4 invoices)
@@ -804,16 +852,20 @@ class InvoiceTest(TreeData, AuthUserTest, SimpleOListViewTest, FilterOListViewTe
         self.update_set = { 'registered' : True, 'sent': True, 'date':'12/01/2011', 'total': '1000' }
         self.view = InvoiceCRUD()  # defined view 
         super(InvoiceTest, self).__init__(*args, **kwargs)
+
         
 class CustomerTest(TreeData, AuthUserTest, SimpleOListViewTest, FilterOListViewTest, SimpleOEditViewTest, SimpleODeleteViewTest, FilterOEditViewTest):   
+
     def __init__(self, *args, **kwargs):
         self.model = 'customer'        
         self.model_inserting = 4
         self.ignore_action = []   
         self.view = CustomerCRUD()  # defined view
         super(CustomerTest, self).__init__(*args, **kwargs)  
+
         
 class AdminTest(TreeData, AdminViewTestCase):   
+
     def __init__(self, *args, **kwargs):     
         self.model_inserting = 4
         super(AdminTest, self).__init__(*args, **kwargs)  
