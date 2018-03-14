@@ -28,12 +28,12 @@ class Invoice_AjaxCRUD(InlineAjaxCRUD):
     
 class CustomerCRUD(CRUDView):
     model = Customer
-    template_name_base='ccruds'  #customer cruds => ccruds
+    #template_name_base='ccruds'  #customer cruds => ccruds
     namespace = None
     check_login = True
     check_perms = True
     views_available=['create', 'list', 'delete', 'update', 'detail']
-    fields = ['name','email']
+    #fields = ['name','email']
     related_fields = ['invoice']
     custom_forms = {
         'add_customer': CustomerForm,
